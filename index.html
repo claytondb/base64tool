@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Tool - Encode & Decode Anything</title>
+    <meta name="description" content="Free Base64 encoder and decoder. Convert text, files, and images to and from Base64 instantly.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Base64 Tool</h1>
+            <p class="tagline">Encode and decode text, files, and images</p>
+        </header>
+
+        <main>
+            <!-- Mode Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-mode="text">📝 Text</button>
+                <button class="tab" data-mode="file">📁 File</button>
+                <button class="tab" data-mode="image">🖼️ Image</button>
+                <button class="tab" data-mode="url">🔗 URL</button>
+            </div>
+
+            <!-- Text Mode -->
+            <div id="text-mode" class="mode-content active">
+                <div class="editor-grid">
+                    <div class="editor-panel">
+                        <div class="panel-header">
+                            <span>Plain Text</span>
+                            <div class="panel-actions">
+                                <button class="small-btn" onclick="clearInput('text-input')">Clear</button>
+                                <button class="small-btn" onclick="pasteToInput('text-input')">Paste</button>
+                            </div>
+                        </div>
+                        <textarea id="text-input" placeholder="Enter text to encode..."></textarea>
+                    </div>
+                    <div class="action-column">
+                        <button class="action-btn encode" onclick="encodeText()">Encode →</button>
+                        <button class="action-btn decode" onclick="decodeText()">← Decode</button>
+                    </div>
+                    <div class="editor-panel">
+                        <div class="panel-header">
+                            <span>Base64</span>
+                            <div class="panel-actions">
+                                <button class="small-btn" onclick="copyOutput('text-output')">Copy</button>
+                            </div>
+                        </div>
+                        <textarea id="text-output" placeholder="Base64 output will appear here..."></textarea>
+                    </div>
+                </div>
+                <div class="options-row">
+                    <label><input type="checkbox" id="url-safe"> URL-safe encoding</label>
+                    <label><input type="checkbox" id="add-padding" checked> Include padding (=)</label>
+                </div>
+            </div>
+
+            <!-- File Mode -->
+            <div id="file-mode" class="mode-content">
+                <div class="drop-zone" id="file-drop">
+                    <div class="drop-content">
+                        <span class="drop-icon">📁</span>
+                        <p>Drop a file here or <label class="file-label">browse<input type="file" id="file-input" hidden></label></p>
+                        <p class="drop-hint">Max 5MB for best performance</p>
+                    </div>
+                </div>
+                <div class="file-info" id="file-info" style="display:none;">
+                    <strong id="file-name"></strong>
+                    <span id="file-size"></span>
+                    <span id="file-type"></span>
+                </div>
+                <div class="editor-panel full">
+                    <div class="panel-header">
+                        <span>Base64 Output</span>
+                        <div class="panel-actions">
+                            <button class="small-btn" onclick="copyOutput('file-output')">Copy</button>
+                            <button class="small-btn" onclick="downloadBase64()">Download .txt</button>
+                        </div>
+                    </div>
+                    <textarea id="file-output" readonly placeholder="Upload a file to see Base64 output..."></textarea>
+                </div>
+                <div class="decode-section">
+                    <h3>Decode Base64 to File</h3>
+                    <textarea id="decode-input" placeholder="Paste Base64 string here..."></textarea>
+                    <div class="decode-actions">
+                        <input type="text" id="decode-filename" placeholder="filename.ext">
+                        <button class="action-btn" onclick="decodeToFile()">Download File</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Mode -->
+            <div id="image-mode" class="mode-content">
+                <div class="drop-zone" id="image-drop">
+                    <div class="drop-content">
+                        <span class="drop-icon">🖼️</span>
+                        <p>Drop an image here or <label class="file-label">browse<input type="file" id="image-input" accept="image/*" hidden></label></p>
+                    </div>
+                </div>
+                <div class="image-preview" id="image-preview" style="display:none;">
+                    <img id="preview-img" alt="Preview">
+                </div>
+                <div class="editor-panel full">
+                    <div class="panel-header">
+                        <span>Data URL</span>
+                        <div class="panel-actions">
+                            <button class="small-btn" onclick="copyOutput('image-output')">Copy</button>
+                        </div>
+                    </div>
+                    <textarea id="image-output" readonly placeholder="Upload an image to get its data URL..."></textarea>
+                </div>
+                <div class="html-output">
+                    <h3>HTML &lt;img&gt; Tag</h3>
+                    <code id="html-tag"></code>
+                    <button class="small-btn" onclick="copyHTML()">Copy HTML</button>
+                </div>
+            </div>
+
+            <!-- URL Mode -->
+            <div id="url-mode" class="mode-content">
+                <div class="url-section">
+                    <h3>URL Encode / Decode</h3>
+                    <div class="editor-grid">
+                        <div class="editor-panel">
+                            <div class="panel-header"><span>Decoded URL</span></div>
+                            <textarea id="url-input" placeholder="Enter URL or text with special characters..."></textarea>
+                        </div>
+                        <div class="action-column">
+                            <button class="action-btn encode" onclick="encodeURL()">Encode →</button>
+                            <button class="action-btn decode" onclick="decodeURL()">← Decode</button>
+                        </div>
+                        <div class="editor-panel">
+                            <div class="panel-header">
+                                <span>Encoded URL</span>
+                                <button class="small-btn" onclick="copyOutput('url-output')">Copy</button>
+                            </div>
+                            <textarea id="url-output" placeholder="URL-encoded output..."></textarea>
+                        </div>
+                    </div>
+                    <div class="options-row">
+                        <label><input type="checkbox" id="encode-component" checked> encodeURIComponent (recommended)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-bar" id="stats-bar">
+                <span id="input-size">Input: 0 chars</span>
+                <span id="output-size">Output: 0 chars</span>
+                <span id="ratio">Ratio: -</span>
+            </div>
+        </main>
+
+        <footer>
+            <p>100% client-side • Your data stays in your browser</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
